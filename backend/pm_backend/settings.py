@@ -131,6 +131,12 @@ GRAPHENE = {
 }
 
 
+
+# //////////
+MIDDLEWARE.insert(1, "projects.middleware.OrganizationMiddleware")
+
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
