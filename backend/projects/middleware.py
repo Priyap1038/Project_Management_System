@@ -7,7 +7,7 @@ class OrganizationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        org_slug = request.headers.get("X-ORG-Slug") or request.GET.get("org")
+        org_slug = request.headers.get("X-ORG-SLUG") or request.GET.get("org")
         request.organization = None
 
         if org_slug:

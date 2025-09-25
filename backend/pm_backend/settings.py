@@ -57,10 +57,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    "projects.middleware.OrganizationMiddleware",
 
     "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
 ]
 
 ROOT_URLCONF = 'pm_backend.urls'
@@ -98,9 +97,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("POSTGRES_DB", "pm_db"),
-        "USER": os.getenv("POSTGRES_USER", "pm_user"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "pm_pass"),
-        "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "Priya@123"),
+        "HOST": "localhost",
         "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
 }
