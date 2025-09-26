@@ -1,27 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import ProjectList from "./components/ProjectList";
+import ProjectForm from "./components/ProjectForm";
+import TaskList from "./components/TaskList";
 
-function App() {
+const App: React.FC = () => {
+  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <h1>Completed Frontend setup</h1>
-      </header>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Project Dashboard</h1>
+
+      <ProjectForm onCreated={() => setRefresh(!refresh)} />
+      <ProjectList
+        onSelectProject={setSelectedProject}
+        key={refresh ? 1 : 0}
+      />
+      {selectedProject && <TaskList projectId={selectedProject} />}
     </div>
   );
-}
+};
 
 export default App;

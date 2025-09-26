@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from corsheaders.defaults import default_headers
 
 
 load_dotenv()
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,7 +61,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "projects.middleware.OrganizationMiddleware",
 
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'pm_backend.urls'
@@ -147,9 +148,25 @@ USE_I18N = True
 
 USE_TZ = True
 
-# ////////
-CORS_ALLOW_ALL_ORIGINS = True  # for dev; lock down in prod
 
+
+
+# /////////////
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+]
+
+# Allow custom headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "x-org-slug",
+]
+
+
+# ////////
+CORS_ALLOW_ALL_ORIGINS = True # for dev; lock down in prod
+
+CORS_ALLOW_HEADERS = ["*"]
 
 
 # Static files (CSS, JavaScript, Images)

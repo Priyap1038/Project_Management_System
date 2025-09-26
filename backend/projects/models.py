@@ -59,4 +59,4 @@ class Comment(models.Model):
     timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"Comment by {self.author_email} on {self.Task}"
+        return f"Comment by {self.author_email} on {self.task}"

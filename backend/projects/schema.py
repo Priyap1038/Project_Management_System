@@ -17,8 +17,9 @@ class ProjectType(DjangoObjectType):
         model = Project
         fields=("id","name","description","status","due_date","created_at")
     
-    def resolve_task_count(Self, info):
-        return Self.tasks.count()
+
+    def resolve_task_count(self, info):
+        return self.tasks.count()
     
     def resolve_completed_tasks(self, info):
         return self.tasks.filter(status="DONE").count()
@@ -44,12 +45,19 @@ class Query(graphene.ObjectType):
     organization = graphene.List(OrganizationType)
     projects_for_org = graphene.List(ProjectType)
     project = graphene.Field(ProjectType, id= graphene.ID(required= True))
-    tasks_for_project = graphene.List(TaskType, project_id = graphene.ID(required = True))
+    tasks_for_projects = graphene.List(TaskType, project_id = graphene.ID(required = True))
 
     project_status = graphene.Field(
         graphene.JSONString,
         project_id = graphene.ID(required= True)
     )
+
+    task_comments = graphene.List(TaskCommentType, task_id=graphene.ID(required=True))
+
+
+    def resolve_task_comments(self, info, task_id):
+        org = getattr(info.context, "organization", None)
+        return Comment.objects.filter(task__project__organization=org, task__id=task_id)
 
 
     def resolve_organization(root, info):
@@ -66,7 +74,7 @@ class Query(graphene.ObjectType):
     def resolve_project(self, info, id):
         request = info.context
         org = getattr(request, "organization",None)
-        return Project.objects.filter(Organization =org, id = id).first()
+        return Project.objects.filter(organization =org, id = id).first()
     
     def resolve_tasks_for_projects(self, info, project_id):
         request = info.context
@@ -95,11 +103,11 @@ class CreateProject(graphene.Mutation):
         name= graphene.String(required = True)
         description= graphene.String()
         status = graphene.String()
-        due_date = graphene.types.datetime.Date()
+        dueDate = graphene.types.datetime.Date()
 
     project = graphene.Field(ProjectType)
 
-    def mutate(self, info, name, description=None, status="ACTIVE", due_date=None):
+    def mutate(self, info, name, description=None, status="ACTIVE", dueDate=None):
         request = info.context
         org = getattr(request,"organization", None)
 
@@ -111,7 +119,7 @@ class CreateProject(graphene.Mutation):
             name = name,
             description = description,
             status = status,
-            due_date= due_date
+            dueDate= dueDate
         )
 
         return CreateProject(project = p)
@@ -123,7 +131,7 @@ class UpdateProject(graphene.Mutation):
         name = graphene.String()
         description = graphene.String()
         status = graphene.String()
-        due_date = graphene.types.datetime.Date()
+        dueDate = graphene.types.datetime.Date()
 
     project = graphene.Field(ProjectType)
 
@@ -139,20 +147,20 @@ class UpdateProject(graphene.Mutation):
                 setattr(p, k, v)
         
         p.save()
-        return UpdateProject(Project = p)
+        return UpdateProject(project = p)
 
 
 class CreateTask(graphene.Mutation):
     class Arguments:
-        project_id = graphene.ID(required = True)
+        projectId = graphene.ID(required = True)
         title = graphene.String(required =True)
         description = graphene.String()
         status = graphene.String()
-        assignee_email = graphene.String()
+        assigneeEmail = graphene.String()
 
     task = graphene.Field(TaskType)
 
-    def mutate(slef, info, project_id, title, description=None,status= "TODO", assignee_email=None):
+    def mutate(slef, info, project_id, title, description=None,status= "TODO", assigneeEmail=None):
         request= info.context
         org = getattr(request, "organization",None)
         project = Project.objects.filter(organization = org, id = project_id).first()
@@ -160,7 +168,7 @@ class CreateTask(graphene.Mutation):
         if not project:
             raise Exception("Project not found")
         
-        t = Task.objects.create(project= project, title= title, description = description or "", status= status, assignee_email=assignee_email or "")
+        t = Task.objects.create(project= project, title= title, description = description or "", status= status, assigneeEmail=assigneeEmail or "")
         return CreateTask(task = t)
     
 
@@ -170,7 +178,7 @@ class UpdateTask(graphene.Mutation):
         title = graphene.String()
         description = graphene.String()
         status = graphene.String()
-        assignee_email = graphene.String()
+        assigneeEmail = graphene.String()
 
     task = graphene.Field(TaskType)
 
@@ -194,11 +202,12 @@ class AddTaskComment(graphene.Mutation):
     class Arguments:
         task_id = graphene.ID(required = True)
         content = graphene.String(required = True)
-        author_email = graphene.String(required = True)
+        authorEmail = graphene.String(required = True)
 
     comment = graphene.Field(TaskCommentType)
 
-    def mutate(self, info, task_id, content, author_email):
+    def mutate(self, info, task_id, content,         authorEmail = graphene.String(required = True)
+):
         request = info.context
         org = getattr(request,"organization", None)
 
@@ -207,18 +216,72 @@ class AddTaskComment(graphene.Mutation):
         if not task:
             raise Exception("Task not found")
         
-        c = Comment.objects.create(task = task, content= content, author_email = author_email)
+        c = Comment.objects.create(task = task, content= content, authorEmail = authorEmail)
 
         return AddTaskComment(comment = c)
+
+ 
+class DeleteProject(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
     
+    ok = graphene.Boolean()
+
+    def mutate(self, info, id):
+        request = info.context
+        org = getattr(request, "organization", None)
+        project = Project.objects.filter(organization=org, id=id).first()
+        if not project:
+            raise Exception("Project not found")
+        project.delete()
+        return DeleteProject(ok=True)
+
+
+class DeleteTask(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+    
+    ok = graphene.Boolean()
+
+    def mutate(self, info, id):
+        request = info.context
+        org = getattr(request, "organization", None)
+        task = Task.objects.filter(project__organization=org, id=id).first()
+        if not task:
+            raise Exception("Task not found")
+        task.delete()
+        return DeleteTask(ok=True)
+
+
+class DeleteTaskComment(graphene.Mutation):
+    class Arguments:
+        id = graphene.ID(required=True)
+    
+    ok = graphene.Boolean()
+
+    def mutate(self, info, id):
+        request = info.context
+        org = getattr(request, "organization", None)
+        comment = Comment.objects.filter(task__project__organization=org, id=id).first()
+        if not comment:
+            raise Exception("Comment not found")
+        comment.delete()
+        return DeleteTaskComment(ok=True)
+
 
 class Mutation(graphene.ObjectType):
     create_project = CreateProject.Field()
     update_project = UpdateProject.Field()
+    delete_project = DeleteProject.Field()
+
+
     create_task = CreateTask.Field()
     update_task = UpdateTask.Field()
+    delete_task = DeleteTask.Field()
+
     add_task_comment = AddTaskComment.Field()
+    delete_task_comment = DeleteTaskComment.Field()
 
 
-schema = graphene.Schema(query= Query, mutation=Mutation)
+schema = graphene.Schema(query = Query, mutation = Mutation)
     
