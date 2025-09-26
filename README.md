@@ -49,7 +49,7 @@ Supports project/task management, comments, and basic statistics with organizati
    cd mini-pm/backend
 Create a virtual environment and activate:
 
-bash
+```bash
 python -m venv .venv
 # Windows
 .venv\Scripts\activate
@@ -57,50 +57,50 @@ python -m venv .venv
 source .venv/bin/activate
 Install dependencies:
 
-bash
+```bash
 pip install -r requirements.txt
 Configure .env file:
 
-env
+```env
 POSTGRES_DB=pm_db
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 DJANGO_SECRET=mysecretkey
 Apply migrations:
 
-bash
+```bash
 python manage.py makemigrations
 python manage.py migrate
 Create superuser (for admin access):
 
-bash
+```bash
 python manage.py createsuperuser
 Run the backend server:
 
-bash
+```bash
 python manage.py runserver
 GraphQL endpoint available at:
 
-arduino
+```arduino
 http://127.0.0.1:8000/graphql/
 2. Frontend Setup
 Navigate to frontend folder:
 
-bash
+```bash
 cd ../frontend
 Install dependencies:
 
-bash
+```bash
 npm install
 If using Windows and facing node_modules issues, run:
 
-powershell
+```powershell
 Remove-Item -Recurse -Force node_modules
 Remove-Item package-lock.json
 npm install
 Start the frontend server:
 
-bash
+```bash
 npm start
 Frontend will be available at:
 
