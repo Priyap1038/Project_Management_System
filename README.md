@@ -1,11 +1,11 @@
 # Project_Management_System
 
-A simplified multi-tenant **Project Management System** built with **Django + GraphQL** backend and **React + TypeScript + TailwindCSS** frontend.  
-Supports project/task management, comments, and basic statistics with organization-based isolation.
+A simplified multi-tenant **Project Management System** built with **Django + GraphQL** for the backend and **React + TypeScript + TailwindCSS** for the frontend.  
+Supports project/task management, task comments, and basic project statistics with organization-based isolation.
 
 ---
 
-## **Table of Contents**
+## Table of Contents
 
 - [Features](#features)  
 - [Tech Stack](#tech-stack)  
@@ -17,94 +17,107 @@ Supports project/task management, comments, and basic statistics with organizati
   - [GraphQL Mutations](#graphql-mutations)  
 - [Project Structure](#project-structure)  
 - [Future Improvements](#future-improvements)  
+- [Author](#author)  
 
 ---
 
-## **Features**
+## Features
 
 - Multi-tenant support (organization-based data isolation)  
 - CRUD operations for Projects and Tasks  
-- Task comments  
+- Task comments system  
 - Basic project statistics (task counts, completion rates)  
 - Responsive frontend with modern UI (TailwindCSS)  
-- GraphQL queries and mutations  
+- Apollo Client integration for GraphQL queries and mutations  
 
 ---
 
-## **Tech Stack**
+## Tech Stack
 
 - **Backend:** Django 4.x, Graphene-Django, PostgreSQL  
-- **Frontend:** React 18+, TypeScript, TailwindCSS  
+- **Frontend:** React 18+, TypeScript, Apollo Client, TailwindCSS  
 - **Database:** PostgreSQL (local setup)  
 
 ---
 
-## **Setup Instructions**
+## Setup Instructions
 
-### **1. Backend Setup**
+### Backend
 
-1. Clone the repo and navigate to the backend folder:
+1. Clone the repository and navigate to the backend folder:
    ```bash
    git clone <repo_url>
    cd mini-pm/backend
-Create a virtual environment and activate:
+Create a virtual environment and activate it:
 
-```bash
+bash
+
 python -m venv .venv
 # Windows
 .venv\Scripts\activate
 # Linux / Mac
 source .venv/bin/activate
-Install dependencies:
+Install backend dependencies:
 
-```bash
+bash
+
 pip install -r requirements.txt
-Configure .env file:
+Configure .env file in backend/:
 
-```env
+env
+
 POSTGRES_DB=pm_db
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 DJANGO_SECRET=mysecretkey
 Apply migrations:
 
-```bash
+bash
+
 python manage.py makemigrations
 python manage.py migrate
-Create superuser (for admin access):
+Create a superuser for admin access:
 
-```bash
+bash
+
 python manage.py createsuperuser
 Run the backend server:
 
-```bash
+bash
+
 python manage.py runserver
-GraphQL endpoint available at:
+GraphQL endpoint will be available at:
 
-```arduino
+arduino
+
 http://127.0.0.1:8000/graphql/
-2. Frontend Setup
-Navigate to frontend folder:
+Frontend
+Navigate to the frontend folder:
 
-```bash
+bash
+
 cd ../frontend
-Install dependencies:
+Install frontend dependencies:
 
-```bash
+bash
+
 npm install
-If using Windows and facing node_modules issues, run:
+If you face errors with node_modules or package-lock, reset:
 
-```powershell
+powershell
+
 Remove-Item -Recurse -Force node_modules
 Remove-Item package-lock.json
 npm install
 Start the frontend server:
 
-```bash
+bash
+
 npm start
 Frontend will be available at:
 
 arduino
+
 http://localhost:3000
 API Usage
 GraphQL Queries
@@ -187,14 +200,13 @@ mutation {
 
 
 
-Project Structure
+**Project Structure**
 
 bash
-
 mini-pm/
 ├─ backend/
-│  ├─ pm_backend/          # Django project
-│  ├─ projects/            # App containing models, schema, middleware
+│  ├─ pm_backend/          # Django project files
+│  ├─ projects/            # App: models, schema, middleware
 │  ├─ .env                 # Environment variables
 │  └─ requirements.txt
 ├─ frontend/
@@ -220,3 +232,7 @@ CI/CD setup and automated testing
 
 Author
 Priya P – Full Stack Developer
+
+yaml
+
+---
